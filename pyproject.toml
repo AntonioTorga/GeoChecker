@@ -18,7 +18,7 @@ dependencies = [
                 ]
 
 [project.scripts]
-mycli = "GeoChecker.GeoChecker:app"
+geochecker = "GeoChecker.cli:app"
 
 [tool.black]
 line-length = 88
