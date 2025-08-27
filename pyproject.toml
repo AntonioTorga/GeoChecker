@@ -15,6 +15,7 @@ dependencies = [
                 "matplotlib",
                 "seaborn",
                 "pandas",
+                "grass-session"
                 ]
 
 [project.scripts]
