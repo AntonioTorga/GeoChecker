@@ -2,7 +2,7 @@ import random
 
 class UtilMisc:
     
-    @staticmethod
+    @classmethod
     def generate_word(length: int = 5, prefix: str = 'mapset_'):
         _signs = "abcdefghijklmnopqrstuvwxyz1234567890"
 
