@@ -1,7 +1,18 @@
-from postprocessors.Check import Check
-from utils.Visualizer import Visualizer
+from .Check import Check
+from ..utils.Visualizer import Visualizer
 import numpy as np
 
+nodes_type_id = {
+        "demand_site": 1,
+        "groundwater": 3,
+        "reservoir": 4,
+        "river_withdrawal": 10,
+        "diversion_outflow": 11,
+        "tributary_inflow": 13,
+        "return_flow_node": 17,
+        "catchment": 21,
+        "catchment_inflow_node": 23
+        }
 
 class SuperpositionCheck(Check):
     """
@@ -87,8 +98,8 @@ class SuperpositionCheck(Check):
         self.base_feature = base_feature
         self.secondary_feature = secondary_feature
 
-        self.base_feature_type_id = config.nodes_type_id[self.base_feature]
-        self.secondary_feature_type_id = config.nodes_type_id[self.secondary_feature]
+        self.base_feature_type_id = nodes_type_id[self.base_feature]
+        self.secondary_feature_type_id = nodes_type_id[self.secondary_feature]
 
         self.base_names = {}
         self.secondary_names = {}

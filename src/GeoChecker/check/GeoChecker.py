@@ -1,4 +1,4 @@
-from utils import Visualizer
+from ..utils.Visualizer import Visualizer
 
 
 class GeoChecker:
