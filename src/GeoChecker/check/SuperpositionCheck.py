@@ -325,21 +325,28 @@ class SuperpositionCheck(Check):
         pass
 
     def cell_check_operation(self, cell_id, cell):
-        base_element_data = self.get_cell_feature_data(cell, self.base_feature)
+        base_element_data = self.get_cell_feature_data(cell, self.base_feature) # [] if non existent
+        print(base_element_data)
         secondary_element_data = self.get_cell_feature_data(
             cell, self.secondary_feature
         )
+        print(secondary_element_data)
 
+        cell_area = cell["cell_area"]
+
+        for base in base_element_data: self.base_names[base] += cell_area
+        for secondary in secondary_element_data: self.secondary_names[secondary] += cell_area
+
+        if base_element_data is None or secondary_element_data is None:
+            return 
         for base in base_element_data:
-            base_name = base["name"]
-            self.base_names[base_name] += 1
+            base_name = base
             for secondary in secondary_element_data:
-                secondary_name = secondary["name"]
-                self.secondary_names[secondary_name] += 1
+                secondary_name = secondary
                 if not self.check_connection(base_name, secondary_name):
                     self.add_error(base_name, secondary_name)
                 else:
                     if self.connections.get(base_name):
-                        self.connections[base_name][secondary_name] += 1
+                        self.connections[base_name][secondary_name] += cell_area
 
         self.make_errors()

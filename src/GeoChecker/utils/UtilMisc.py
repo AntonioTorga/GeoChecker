@@ -68,11 +68,12 @@ class UtilMisc:
             area = cell.area()
 
             demand_attrs = [attr for attr in cell.attrs.keys() if attr.startswith(ds_prefix)]
-            demand_sites = [cell.attrs[attr] for attr in demand_attrs]
+            demand_sites = list(set([cell.attrs[attr] for attr in demand_attrs]))
+            demand_sites.remove(None)
 
             cells[cat] = {
                 "catchment": catch,
-                "groundwater":gw,
+                "groundwater": gw,
                 "demand_site": demand_sites,
                 "cell_area":area,
             }

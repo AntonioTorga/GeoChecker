@@ -18,10 +18,6 @@ def run(linkage: Path, arc: Path, node: Path, results_folder: Path):
         linkage.open("r")
 
         cells, arcs, nodes = UtilMisc.structure_creation("linkage_map", "arc_map", "node_map")
-
-        print(arcs)
-        print(nodes)
-        print(cells)
         
         geochecker = GeoChecker(
         [
@@ -29,4 +25,7 @@ def run(linkage: Path, arc: Path, node: Path, results_folder: Path):
             SuperpositionCheck("groundwater", "catchment"),
         ],
         folder_path=results_folder,
-    )
+        )
+
+        geochecker.setup(cells, arcs, nodes)
+        geochecker.run()
