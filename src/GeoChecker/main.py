@@ -10,18 +10,20 @@ def run(linkage: Path, arc: Path, node: Path, results_folder: Path):
     location = UtilMisc.generate_word(length=10)
 
     with Session(gisdb="/tmp", location=location, create_opts="EPSG:32719"):
-        GrassCoreAPI.import_map(linkage, "linkage_map")
-        GrassCoreAPI.import_map(arc, "arc_map")
-        GrassCoreAPI.import_map(node, "node_map")
+        GrassCoreAPI.import_map("linkage_map",linkage)
+        GrassCoreAPI.import_map("arc_map",arc)
+        GrassCoreAPI.import_map("node_map",node)
 
         linkage = VectorTopo("linkage_map")
         linkage.open("r")
 
-        for cell in linkage.viter("areas"):
-            print(type(cell))
-            print(cell)
+        cells, arcs, nodes = UtilMisc.structure_creation("linkage_map", "arc_map", "node_map")
+
+        print(arcs)
+        print(nodes)
+        print(cells)
         
-            geochecker = GeoChecker(
+        geochecker = GeoChecker(
         [
             SuperpositionCheck("groundwater", "demand_site"),
             SuperpositionCheck("groundwater", "catchment"),
