@@ -68,7 +68,7 @@ class UtilMisc:
             area = cell.area()
 
             demand_attrs = [attr for attr in cell.attrs.keys() if attr.startswith(ds_prefix)]
-            demand_sites = [cell[attr] for attr in demand_attrs]
+            demand_sites = [cell.attrs[attr] for attr in demand_attrs]
 
             cells[cat] = {
                 "catchment": catch,
@@ -81,7 +81,7 @@ class UtilMisc:
         arc_vt = VectorTopo(arc_map)
         arc_vt.open("r")
 
-        for arc in arc_vt.viter():
+        for arc in arc_vt.viter("lines"):
             obj_id = arc.attrs["ObjID"]
             type_id = arc.attrs["TypeID"]
             src_id = arc.attrs["SrcObjID"]
@@ -95,7 +95,7 @@ class UtilMisc:
         node_vt = VectorTopo(node_map)
         node_vt.open("r")
 
-        for node in node_vt.viter():
+        for node in node_vt.viter("points"):
             obj_id = node.attrs["ObjID"]
             type_id = node.attrs["TypeID"]
             name = node.attrs["Name"]
