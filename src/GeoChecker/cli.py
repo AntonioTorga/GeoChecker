@@ -39,5 +39,17 @@ def check(
         Path,
         typer.Option(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
     ] = Path("./").resolve(),
+    catchment_name: Annotated[
+        str,
+        typer.Option(),
+    ] = "CATCHMEN",
+    groundwater_name: Annotated[
+        str,
+        typer.Option(),
+    ] = "GROUNDWA",
+    ds_prefix: Annotated[
+        str,
+        typer.Option(),
+    ] = "D_",
 ):
     run(linkage_file, arcs, nodes, results_folder=results_folder)

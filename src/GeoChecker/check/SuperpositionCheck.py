@@ -343,7 +343,7 @@ class SuperpositionCheck(Check):
             for secondary in secondary_element_data:
                 secondary_name = secondary
                 if not self.check_connection(base_name, secondary_name):
-                    self.add_error(base_name, secondary_name, area = cell_area)
+                    self.add_error(base_name, secondary_name, area=cell_area)
                 else:
                     if self.connections.get(base_name):
                         self.connections[base_name][secondary_name] += cell_area

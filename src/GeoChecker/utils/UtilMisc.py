@@ -16,28 +16,29 @@ class UtilMisc:
 
     @staticmethod
     def structure_creation(
-        linkage_map,
-        arc_map,
-        node_map,
-        catch_name="CATCHMEN",
-        gw_name="GROUNDWA",
-        ds_prefix="D_",
+        linkage_map: str,
+        arc_map: str,
+        node_map: str,
+        catch_name: str,
+        gw_name: str,
+        ds_prefix: str,
     ):
         """_summary_
 
         Parameters
         ----------
-        linkage_map : _type_
-            _description_
-        arc_map : _type_
-            _description_
-        node_map : _type_
-            _description_
+        linkage_map : str
+            Name assigned to the map created when Linkage file was imported to the mapset.
+        arc_map : str
+            Name assigned to the map created when the WEAP Arc file was imported to the mapset.
+        node_map : str
+            Name assigned to the map created when the WEAP Arc file was imported to the mapset.
 
         Returns
         -------
-        dict
 
+        dict
+            Dict representing the cells of the linkage file. Has the following structure:
             {Cell ID :
                 {
                     'catchment': catchment name,
@@ -47,21 +48,21 @@ class UtilMisc:
                 }
             }
         dict
-
-            {Node ID :
-                {
-                    'type_id': geometry type ID,
-                    'name': node name,
-                    'cat': node internal ID (used by 'pygrass library')
-                }
-            }
-        dict
-
+            Dict representing the cells Arcs of the WEAP Model. Has the following structure:
             {Arc ID :
                 {
                     'type_id': geometry type ID of the arc,
                     'src_id': source node ID (or None),
                     'dst_id': destination node ID (or None)
+                }
+            }
+        dict
+            Dict representing the Nodes of the WEAP Model. Has the following structure:
+            {Node ID :
+                {
+                    'type_id': geometry type ID,
+                    'name': node name,
+                    'cat': node internal ID (used by 'pygrass library')
                 }
             }
         """
