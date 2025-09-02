@@ -52,4 +52,4 @@ def check(
         typer.Option(),
     ] = "D_",
 ):
-    run(linkage_file, arcs, nodes, results_folder=results_folder)
+    run(linkage_file, arcs, nodes, results_folder=results_folder, catchment_name=catchment_name, groundwater_name=groundwater_name, ds_prefix=ds_prefix)
