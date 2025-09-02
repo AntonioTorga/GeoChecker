@@ -3,16 +3,17 @@ from ..utils.Visualizer import Visualizer
 import numpy as np
 
 nodes_type_id = {
-        "demand_site": 1,
-        "groundwater": 3,
-        "reservoir": 4,
-        "river_withdrawal": 10,
-        "diversion_outflow": 11,
-        "tributary_inflow": 13,
-        "return_flow_node": 17,
-        "catchment": 21,
-        "catchment_inflow_node": 23
-        }
+    "demand_site": 1,
+    "groundwater": 3,
+    "reservoir": 4,
+    "river_withdrawal": 10,
+    "diversion_outflow": 11,
+    "tributary_inflow": 13,
+    "return_flow_node": 17,
+    "catchment": 21,
+    "catchment_inflow_node": 23,
+}
+
 
 class SuperpositionCheck(Check):
     """
@@ -52,8 +53,6 @@ class SuperpositionCheck(Check):
         Add an error to the connection_error dictionary, checks if the base element
         is already in the dictionary and if the super element is already in the base element
         dictionary.
-    make_errors()
-        Converts the connection_error dictionary into a list of errors strings.
     set_connection(base_info, secondary_info)
         Set the connection between the base and secondary features.
     check_connection(base_name, secondary_name)
@@ -110,18 +109,12 @@ class SuperpositionCheck(Check):
 
     # Space for auxiliary functions specific to this class.
 
-    def add_error(self, base_element, super_element):
+    def add_error(self, base_element, super_element, area=1):
         if not self.connection_error.get(base_element):
             self.connection_error[base_element] = {}
         if not self.connection_error[base_element].get(super_element):
             self.connection_error[base_element][super_element] = 0
-        self.connection_error[base_element][super_element] += 1
-
-    def make_errors(self):
-        for base, secondaries in self.connection_error.items():
-            self.errors.append(
-                f"El elemento {base} del tipo {self.base_feature} no está conectado a los elementos {secondaries} de tipo {self.secondary_feature}."
-            )
+        self.connection_error[base_element][super_element] += area
 
     def set_connection(self, base_info, secondary_info):
         if not self.connections.get(base_info["name"]):
@@ -139,16 +132,20 @@ class SuperpositionCheck(Check):
     def make_error_dict_for_df(self):
         error_list = []
         for base_element, secondary_elements in self.connection_error.items():
-            base_element_cells = self.base_names[base_element]
-            for secondary_element, cells in secondary_elements.items():
-                secondary_element_cells = self.secondary_names[secondary_element]
+            base_element_area = self.base_names[base_element]
+            for secondary_element, error_area in secondary_elements.items():
+                secondary_element_area = self.secondary_names[secondary_element]
                 error_list.append(
                     {
                         self.base_feature: base_element,
-                        f"{self.base_feature}_total_cells": base_element_cells,
+                        f"{self.base_feature}_area": base_element_area,
                         self.secondary_feature: secondary_element,
-                        f"{self.secondary_feature}_total_cells": secondary_element_cells,
-                        "compromised_cells": cells,
+                        f"{self.secondary_feature}_area": secondary_element_area,
+                        "area_error": error_area,
+                        f"percentage_error_of_{self.base_feature}": error_area
+                        / base_element_area,
+                        f"percentage_error_of_{self.secondary_feature}": error_area
+                        / secondary_element_area,
                     }
                 )
         return error_list
@@ -188,7 +185,7 @@ class SuperpositionCheck(Check):
 
         for error in errors.keys():
             [base, secondary] = error.split("-")
-            error_txt = f"{self.base_feature}: {base}{" "*(longest_base_name-len(base) + 1)}|-| {self.secondary_feature}: {secondary}{" "*(longest_secondary_name-len(secondary) + 1)}-> {errors[error]['amount_error']} celdas con error,  {errors[error]['percentaje_error_over_primary']*100:.2f}% del {self.base_feature}, {errors[error]['percentaje_error_over_secondary']*100:.2f}% del {self.secondary_feature}."
+            error_txt = f"{self.base_feature}: {base}{" "*(longest_base_name-len(base) + 1)}|-| {self.secondary_feature}: {secondary}{" "*(longest_secondary_name-len(secondary) + 1)}-> {errors[error]['amount_error']} area de error,  {errors[error]['percentaje_error_over_primary']*100:.2f}% del {self.base_feature}, {errors[error]['percentaje_error_over_secondary']*100:.2f}% del {self.secondary_feature}."
             error_list.append(error_txt)
 
         return error_list
@@ -325,28 +322,28 @@ class SuperpositionCheck(Check):
         pass
 
     def cell_check_operation(self, cell_id, cell):
-        base_element_data = self.get_cell_feature_data(cell, self.base_feature) # [] if non existent
-        print(base_element_data)
+        base_element_data = self.get_cell_feature_data(
+            cell, self.base_feature
+        )  # [] if non existent
         secondary_element_data = self.get_cell_feature_data(
             cell, self.secondary_feature
         )
-        print(secondary_element_data)
 
         cell_area = cell["cell_area"]
 
-        for base in base_element_data: self.base_names[base] += cell_area
-        for secondary in secondary_element_data: self.secondary_names[secondary] += cell_area
+        for base in base_element_data:
+            self.base_names[base] += cell_area
+        for secondary in secondary_element_data:
+            self.secondary_names[secondary] += cell_area
 
         if base_element_data is None or secondary_element_data is None:
-            return 
+            return
         for base in base_element_data:
             base_name = base
             for secondary in secondary_element_data:
                 secondary_name = secondary
                 if not self.check_connection(base_name, secondary_name):
-                    self.add_error(base_name, secondary_name)
+                    self.add_error(base_name, secondary_name, area = cell_area)
                 else:
                     if self.connections.get(base_name):
                         self.connections[base_name][secondary_name] += cell_area
-
-        self.make_errors()

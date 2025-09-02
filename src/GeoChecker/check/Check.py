@@ -72,7 +72,9 @@ class Check(ABC):
     def get_cell_feature_data(self, cell, feature_type):
         #
         data = cell.get(feature_type)
-        return data if data!=None else []
+        if None in data:
+            data.remove(None)
+        return data if data != [None] else []  # mmm
 
     # Abstract methods
 

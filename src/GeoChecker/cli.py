@@ -5,7 +5,9 @@ from rich import print
 import sys
 import subprocess
 
-python_grass_path = subprocess.check_output(["grass", "--config", "python_path"], text=True).strip()
+python_grass_path = subprocess.check_output(
+    ["grass", "--config", "python_path"], text=True
+).strip()
 sys.path.append(python_grass_path)  # add pygrass to path
 
 from .check.GeoChecker import GeoChecker
@@ -17,6 +19,7 @@ app = typer.Typer(
     help="GeoChecker Command Line Interface",
     pretty_exceptions_enable=False,
 )
+
 
 @app.command()
 def check(
@@ -38,6 +41,3 @@ def check(
     ] = Path("./").resolve(),
 ):
     run(linkage_file, arcs, nodes, results_folder=results_folder)
-
-
-
