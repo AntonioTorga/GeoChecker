@@ -9,6 +9,14 @@ source venv\bin\activate
 pip install .
 ```
 
+### Previous requirements:
+This software can only be run if GRASS GIS is installed in your machine (used to interact with geographical data), and in your PATH there is a "grass" variable. 
+You can install GRASS GIS in linux by running:
+```
+sudo apt install grass
+```
+This software has not been tested in any OS other than Linux, so we highly recommend you stick to linux.
+
 ## How to execute:
 Once GeoChecker has been installed you just need to run the following command to run:
 ```
