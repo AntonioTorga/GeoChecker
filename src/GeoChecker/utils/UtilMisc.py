@@ -112,7 +112,7 @@ class UtilMisc:
         for node in node_vt.viter("points"):
             obj_id = node.attrs["ObjID"]
             type_id = node.attrs["TypeID"]
-            name = node.attrs["Name"]
+            name = node.attrs["name2"]
             cat = node.cat
             nodes[obj_id] = {
                 "type_id": type_id,
