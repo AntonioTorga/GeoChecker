@@ -38,7 +38,7 @@ def check(
     results_folder: Annotated[
         Path,
         typer.Option(exists=True, dir_okay=True, file_okay=False, resolve_path=True),
-    ] = Path("./").resolve(),
+    ] = Path("./"),
     catchment_name: Annotated[
         str,
         typer.Option(),
