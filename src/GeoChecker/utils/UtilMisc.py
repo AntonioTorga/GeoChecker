@@ -1,6 +1,12 @@
 import random
+import re
 from grass.pygrass.vector import VectorTopo
 
+def _clear_string(string):
+    if string == None: return None
+    cleared = re.sub(r" (\(\d*\))", "", string)
+
+    return cleared
 
 class UtilMisc:
 
@@ -73,14 +79,14 @@ class UtilMisc:
         for cell in linkage_vt.viter("areas"):
 
             cat = cell.cat
-            catch = cell.attrs[catch_name]
-            gw = cell.attrs[gw_name]
+            catch = _clear_string(cell.attrs[catch_name])
+            gw = _clear_string(cell.attrs[gw_name])
             area = cell.area()
 
             demand_attrs = [
                 attr for attr in cell.attrs.keys() if attr.startswith(ds_prefix)
             ]
-            demand_sites = list(set([cell.attrs[attr] for attr in demand_attrs]))
+            demand_sites = list(set([_clear_string(cell.attrs[attr]) for attr in demand_attrs]))
             if None in demand_sites:
                 demand_sites.remove(None)
 
@@ -112,7 +118,9 @@ class UtilMisc:
         for node in node_vt.viter("points"):
             obj_id = node.attrs["ObjID"]
             type_id = node.attrs["TypeID"]
-            name = node.attrs["name2"]
+            name = node.attrs["name2"] if node.attrs["name2"]!=None else node.attrs["Name"]
+            name = re.sub(r" (\(\d*\))", "", name) if name!=None else None
+
             cat = node.cat
             nodes[obj_id] = {
                 "type_id": type_id,
