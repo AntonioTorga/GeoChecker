@@ -2,6 +2,8 @@ from .Check import Check
 from ..utils.Visualizer import Visualizer
 import numpy as np
 
+from ..utils.UtilMisc import ArcTypes, ArcTypesID
+
 nodes_type_id = {
     "demand_site": 1,
     "groundwater": 3,
@@ -14,6 +16,7 @@ nodes_type_id = {
     "catchment_inflow_node": 23,
 }
 
+arc_type_id = {arc_type.name:ArcTypesID[arc_type.name] for arc_type in list(ArcTypes)} 
 
 class SuperpositionCheck(Check):
     """
@@ -89,7 +92,7 @@ class SuperpositionCheck(Check):
         each cell.
     """
 
-    def __init__(self, base_feature, secondary_feature):
+    def __init__(self, base_feature, secondary_feature, type_of_arc):
         super().__init__()
         self.name = f"Chequeo superposición {base_feature}-{secondary_feature}"
         self.description = f"Chequea si la superposición de elementos [{base_feature}-{secondary_feature}] en el archivo de enlace es correspondida por una conexión en el modelo WEAP, con el fin de prevenir perdida de flujo."
@@ -107,7 +110,24 @@ class SuperpositionCheck(Check):
         self.connections = {}
         self.connection_error = {}
 
+        self._type_of_arc = None
+        self.type_of_arc = type_of_arc
+
     # Space for auxiliary functions specific to this class.
+    @property
+    def type_of_arc(self):
+        return self._type_of_arc
+    
+    @type_of_arc.setter
+    def type_of_arc(self, type_of_arc):
+        if type_of_arc is None:
+            type_of_arc = [x.value for x in list(ArcTypes)]
+        elif not isinstance(type_of_arc, list):
+            type_of_arc = [type_of_arc]
+
+        self._type_of_arc = [ArcTypesID[ArcTypes[type_arc].name] for type_arc in type_of_arc]                
+        return self._type_of_arc    
+
 
     def add_error(self, base_element, super_element, area=1):
         if not self.connection_error.get(base_element):
@@ -305,16 +325,19 @@ class SuperpositionCheck(Check):
     def arc_check_operation(self, arc_id, arc):
         src_id = arc["src_id"]
         dst_id = arc["dst_id"]
+        type_arc = arc["type_id"]
 
         if (src_id and dst_id) and (src_id in self.nodes and dst_id in self.nodes):
             if (
                 self.nodes[src_id]["type_id"] == self.base_feature_type_id
                 and self.nodes[dst_id]["type_id"] == self.secondary_feature_type_id
+                and type_arc in self.type_of_arc
             ):
                 self.set_connection(self.nodes[src_id], self.nodes[dst_id])
             elif (
                 self.nodes[src_id]["type_id"] == self.secondary_feature_type_id
                 and self.nodes[dst_id]["type_id"] == self.base_feature_type_id
+                and type_arc in self.type_of_arc
             ):
                 self.set_connection(self.nodes[dst_id], self.nodes[src_id])
 

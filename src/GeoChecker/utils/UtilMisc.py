@@ -1,6 +1,7 @@
 import random
 import re
 from grass.pygrass.vector import VectorTopo
+from enum import Enum
 
 def _clear_string(string):
     if string == None: return None
@@ -8,6 +9,20 @@ def _clear_string(string):
 
     return cleared
 
+class ArcTypes(str, Enum):
+    river =  "River",
+    transmission_link = "Transmission Link",
+    return_flow = "Return Flow",
+    canal = "Canal",
+    runoff_infiltration = "Runoff/Infiltration"
+
+class ArcTypesID(int, Enum):
+    river =  6,
+    transmission_link = 7,
+    return_flow = 8,
+    canal = 15,
+    runoff_infiltration = 22
+        
 class UtilMisc:
 
     @staticmethod

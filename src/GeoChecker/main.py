@@ -1,7 +1,7 @@
 from grass.pygrass.vector import VectorTopo
 from grass_session import Session
 from pathlib import Path
-from .utils.UtilMisc import UtilMisc
+from .utils.UtilMisc import UtilMisc, ArcTypes, ArcTypesID
 from .utils.GrassCoreAPI import GrassCoreAPI
 from .check.GeoChecker import GeoChecker
 from .check.SuperpositionCheck import SuperpositionCheck
@@ -15,6 +15,7 @@ def run(
     catchment_name: str,
     groundwater_name: str,
     ds_prefix: str,
+    type_of_arc: ArcTypesID | ArcTypes| None
 ):
     location = UtilMisc.generate_word(length=10)
 
@@ -37,8 +38,8 @@ def run(
 
         geochecker = GeoChecker(
             [
-                SuperpositionCheck("groundwater", "demand_site"),
-                SuperpositionCheck("groundwater", "catchment"),
+                SuperpositionCheck("groundwater", "demand_site", type_of_arc),
+                SuperpositionCheck("groundwater", "catchment", type_of_arc),
             ],
             folder_path=results_folder,
         )

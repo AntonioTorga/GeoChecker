@@ -1,5 +1,5 @@
 import typer
-from typing_extensions import Annotated
+from typing_extensions import Annotated, Union
 from pathlib import Path
 from rich import print
 import sys
@@ -17,6 +17,7 @@ sys.path.append(python_grass_path)  # add pygrass to path
 
 from .check.GeoChecker import GeoChecker
 from .check.SuperpositionCheck import SuperpositionCheck
+from .utils.UtilMisc import ArcTypes, ArcTypesID
 from .main import run
 
 app = typer.Typer(
@@ -68,6 +69,10 @@ def check(
             help="Folder in which to leave the check results.",
         ),
     ] = Path("./"),
+    type_of_arc: Annotated[
+        Union[ArcTypes,list[ArcTypes],None],
+        typer.Option(help = f"Type of Arc considered a connection. Can be a list of Arc types. If None all types are considered a connection without distinction.\nOptions are:  {[x.value for x in ArcTypes]} ")
+    ] = ArcTypes.transmission_link,
     catchment_name: Annotated[
         str,
         typer.Option(help="Catchment attribute name in the .dbf file"),
@@ -93,4 +98,5 @@ def check(
         catchment_name=catchment_name,
         groundwater_name=groundwater_name,
         ds_prefix=ds_prefix,
+        type_of_arc  = type_of_arc
     )
